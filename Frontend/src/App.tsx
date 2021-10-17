@@ -1,9 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
+import Counter from './components/counter';
+
+
 
 function App() {
-  return (<div>Hello World</div>);
+  return (
+    <div>
+      <div>Hello World</div>
+      <Counter></Counter>
+    </div>
+    );
 }
+
 
 export default App;
