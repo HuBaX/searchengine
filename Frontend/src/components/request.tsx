@@ -4,18 +4,18 @@ import React, { useState } from 'react';
 
 function Search() {
     
-    const [state, setState] = useState([]);
+    const [state, setState] = useState<any[]>([]);
 
     const  sendRequest = () => {
-        fetch('3.218.166.198:8080')
+        fetch('http://3.218.166.198:8080')
             .then(response => response.json())
             .then(data => setState(data));
     };
  
     return (
         <div>
-            <Button>Test</Button>
-            <p>Data: {state}</p>
+            <Button onClick={sendRequest}>Test</Button>
+            <p>Data: {JSON.stringify(state)}</p>
         </div>
     )
 }
