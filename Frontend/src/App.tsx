@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import Counter from './components/counter';
+import Search from './components/request';
 
 
 
@@ -9,7 +9,7 @@ function App() {
   return (
     <div>
       <div>Hello World</div>
-      <Counter></Counter>
+      <Search></Search>
     </div>
     );
 }
