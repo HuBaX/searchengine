@@ -10,7 +10,8 @@ import DiscreteSliderLabel from './slider';
 
 function SearchRequest() {
 
-    const [state, setState] = useState<any[]>([]);
+    const [state, setState] = useState<any[]>([])
+    const [isFilterVisible, setIsFilterVisible] = useState(false)
 
     const  sendRequest = () => {
         fetch('http://3.218.166.198:8080')
@@ -18,9 +19,9 @@ function SearchRequest() {
             .then(data => setState(data));
     };
 
-
+    // TODO: Reset state of slider
     const toggleFilterSection = () => {
-       
+      setIsFilterVisible(!isFilterVisible)  
     }
 
   return (
@@ -32,11 +33,15 @@ function SearchRequest() {
             <IconButton onClick={sendRequest} color="primary"  > <SearchIcon/> </IconButton>
             <IconButton onClick={toggleFilterSection} color="primary" > <FilterAltIcon/></IconButton>
         </Box>  
-        <DiscreteSliderLabel></DiscreteSliderLabel>
-        <Box sx={{display: "flex"}}>
-          <Tags filterType="Ingredients" placeholder="e.g Chicken, Fish, ..."></Tags>
-          <Tags filterType="Tags" placeholder="e.g high-protein, dessert, ..."></Tags>
-        </Box>
+        {isFilterVisible &&
+          <div> 
+            <DiscreteSliderLabel></DiscreteSliderLabel>
+            <Box sx={{display: "flex"}}>
+              <Tags filterType="Ingredients" placeholder="e.g Chicken, Fish, ..."></Tags>
+              <Tags filterType="Tags" placeholder="e.g high-protein, dessert, ..."></Tags>
+            </Box>
+          </div> 
+        }
         </Paper>
         </Box>
       </Container>

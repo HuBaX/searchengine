@@ -6,6 +6,10 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 
+
+interface Recipe {n_steps: number, n_ingredients: number, minutes: number, description: string, steps: string[], tags: string[], nutrition: number[], name: string, ingredients: string[]}
+
+
 function RecipeDialog() {
   const [open, setOpen] = React.useState(false);
 

@@ -2,18 +2,24 @@ import * as React from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 import {Container} from '@mui/material';
+import { useState } from "react";
 
-export declare interface TagProps { filterType: string,  placeholder: string}
+interface TagProps { filterType: string,  placeholder: string}
+
 
 
 function Tags({filterType,placeholder}: TagProps) {
+
+  const [items, setItems] = useState<string[]>([]);
+
+
   return (
     <Container>
       <Autocomplete
         multiple
         id="tags-outlined"
-        options={top100Films}
-        getOptionLabel={(option) => option.title}
+        options={items}
+        getOptionLabel={ (item) => {return item}}
         filterSelectedOptions
         renderInput={(params) => (
           <TextField
@@ -30,15 +36,3 @@ function Tags({filterType,placeholder}: TagProps) {
 
 
 export default  Tags
-
-
-// Top 100 films as rated by IMDb users. http://www.imdb.com/chart/top
-const top100Films = [
-  { title: 'The Shawshank Redemption', year: 1994 },
-  { title: 'The Godfather', year: 1972 },
-  { title: 'The Godfather: Part II', year: 1974 },
-  { title: 'The Dark Knight', year: 2008 },
-  { title: '12 Angry Men', year: 1957 },
-  { title: "Schindler's List", year: 1993 },
-  { title: 'Pulp Fiction', year: 1994 },
-];

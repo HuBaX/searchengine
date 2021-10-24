@@ -3,12 +3,12 @@ import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
 import RecipeDialog from './recipedialog';
+import {Grid} from "@mui/material"
 
+export declare interface RecipeCardProps { recipeName: string,  description: string, time: number}
 
-
-function RecipeCard() {
+function RecipeCard({recipeName, description, time}: RecipeCardProps) {
 
     const showFullRecipe = () => {
         
@@ -16,25 +16,25 @@ function RecipeCard() {
   
     
   return (
+      <Grid item xs={4}> 
         <Card sx={{margin: 2}}>
         <CardContent>
             <Typography variant="h5">
-            Recipe name
+            {recipeName}
             </Typography>
             <Typography>
-            Description
+            {description}
             </Typography>
             <Typography>
-            Time
+            {time}
             </Typography>
         </CardContent>
         <CardActions>
           <RecipeDialog></RecipeDialog>
         </CardActions>
         </Card>
+      </Grid>
   );
 }
 
 export default RecipeCard
-
-// sx={{ minWidth: 275 , width: 500,  justifyContent: "center", alignItems: "center", margin:1}}
