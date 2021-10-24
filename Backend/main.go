@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"suchmaschinen/elastic"
 	"suchmaschinen/router"
 
 	"github.com/elastic/go-elasticsearch/v7"
@@ -28,6 +29,6 @@ func main() {
 
 	defer res.Body.Close()
 	log.Println(res)
-	router.Es = Es
+	elastic.Es = Es
 	router.SetupRouter()
 }
