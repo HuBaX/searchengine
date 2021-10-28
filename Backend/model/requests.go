@@ -5,10 +5,17 @@ type AutocompReq struct {
 }
 
 type PreviewReq struct {
-	From     int
-	FieldVal string
+	From int
+	Name string
 }
 
 type RecipeReq struct {
 	Id int64
+}
+
+type FilterPreviewReq struct {
+	From        int
+	Name        string
+	Tags        []string
+	Ingredients []string
 }

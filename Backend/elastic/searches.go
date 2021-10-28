@@ -4,8 +4,9 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"io"
 	"log"
-	"strings"
+
 	"suchmaschinen/model"
 	"suchmaschinen/util"
 
@@ -16,32 +17,23 @@ import (
 
 var Es *elasticsearch.Client
 
-var nameSearchQuery map[string]interface{} = map[string]interface{}{
-	"from": 0,
-	"size": 15,
-	"query": map[string]interface{}{
-		"fuzzy": map[string]interface{}{
-			"name": map[string]interface{}{
-				"value":     "",
-				"fuzziness": 3,
+func SearchRecipesByName(fuzzyReq model.PreviewReq) []model.RecipePreview {
+	var nameSearchQuery map[string]interface{} = map[string]interface{}{
+		"from": fuzzyReq.From,
+		"size": 15,
+		"query": map[string]interface{}{
+			"fuzzy": map[string]interface{}{
+				"name": map[string]interface{}{
+					"value":     fuzzyReq.Name,
+					"fuzziness": 3,
+				},
 			},
 		},
-	},
-}
-
-func SearchRecipesByName(fuzzyReq model.PreviewReq) []model.RecipePreview {
+	}
 	var result map[string]interface{}
 	var buf bytes.Buffer
-	nameSearchQuery["query"].(map[string]interface{})["fuzzy"].(map[string]interface{})["name"].(map[string]interface{})["value"] = fuzzyReq.FieldVal
-	nameSearchQuery["from"] = fuzzyReq.From
 	util.JsonEncode(nameSearchQuery, &buf)
-	res, err := Es.Search(
-		Es.Search.WithContext(context.Background()),
-		Es.Search.WithIndex("gami1018_rufl1020_recipes"),
-		Es.Search.WithBody(&buf),
-		Es.Search.WithTrackTotalHits(true),
-		Es.Search.WithPretty(),
-	)
+	res, err := executeSearch(&buf)
 	if err != nil {
 		log.Printf("Error getting response: %s", err)
 	}
@@ -59,31 +51,24 @@ func SearchRecipesByName(fuzzyReq model.PreviewReq) []model.RecipePreview {
 	return recipes
 }
 
-var nameAutocompQuery map[string]interface{} = map[string]interface{}{
-	"_source": "name_suggest",
-	"suggest": map[string]interface{}{
-		"recipe-suggest": map[string]interface{}{
-			"prefix": "",
-			"completion": map[string]interface{}{
-				"field":           "name_suggest",
-				"size":            7,
-				"skip_duplicates": true,
+func NameAutocomplete(prefix string) []string {
+	var nameAutocompQuery map[string]interface{} = map[string]interface{}{
+		"_source": "name_suggest",
+		"suggest": map[string]interface{}{
+			"recipe-suggest": map[string]interface{}{
+				"prefix": prefix,
+				"completion": map[string]interface{}{
+					"field":           "name_suggest",
+					"size":            7,
+					"skip_duplicates": true,
+				},
 			},
 		},
-	},
-}
-
-func NameAutocomplete(prefix string) []string {
+	}
 	var result map[string]interface{}
 	var buf bytes.Buffer
-	nameAutocompQuery["suggest"].(map[string]interface{})["recipe-suggest"].(map[string]interface{})["prefix"] = prefix
 	util.JsonEncode(nameAutocompQuery, &buf)
-	res, err := Es.Search(
-		Es.Search.WithContext(context.Background()),
-		Es.Search.WithIndex("gami1018_rufl1020_recipes"),
-		Es.Search.WithBody(&buf),
-		Es.Search.WithPretty(),
-	)
+	res, err := executeSearch(&buf)
 
 	if err != nil {
 		log.Printf("Error getting recipe suggestion response: %s", err)
@@ -102,31 +87,24 @@ func NameAutocomplete(prefix string) []string {
 	return suggestions
 }
 
-var ingredientsAutocompQuery map[string]interface{} = map[string]interface{}{
-	"_source": "ingredients_suggest",
-	"suggest": map[string]interface{}{
-		"ingredients-suggest": map[string]interface{}{
-			"prefix": "",
-			"completion": map[string]interface{}{
-				"field":           "ingredients_suggest",
-				"size":            7,
-				"skip_duplicates": true,
+func IngredientAutocomplete(prefix string) []string {
+	var ingredientsAutocompQuery map[string]interface{} = map[string]interface{}{
+		"_source": "ingredients_suggest",
+		"suggest": map[string]interface{}{
+			"ingredients-suggest": map[string]interface{}{
+				"prefix": prefix,
+				"completion": map[string]interface{}{
+					"field":           "ingredients_suggest",
+					"size":            7,
+					"skip_duplicates": true,
+				},
 			},
 		},
-	},
-}
-
-func IngredientAutocomplete(prefix string) []string {
+	}
 	var result map[string]interface{}
 	var buf bytes.Buffer
-	ingredientsAutocompQuery["suggest"].(map[string]interface{})["ingredients-suggest"].(map[string]interface{})["prefix"] = prefix
 	util.JsonEncode(ingredientsAutocompQuery, &buf)
-	res, err := Es.Search(
-		Es.Search.WithContext(context.Background()),
-		Es.Search.WithIndex("gami1018_rufl1020_recipes"),
-		Es.Search.WithBody(&buf),
-		Es.Search.WithPretty(),
-	)
+	res, err := executeSearch(&buf)
 	if err != nil {
 		log.Printf("Error getting ingredient suggestion response: %s", err)
 	}
@@ -143,31 +121,24 @@ func IngredientAutocomplete(prefix string) []string {
 	return suggestions
 }
 
-var tagsAutocompQuery map[string]interface{} = map[string]interface{}{
-	"_source": "tags_suggest",
-	"suggest": map[string]interface{}{
-		"tags-suggest": map[string]interface{}{
-			"prefix": "",
-			"completion": map[string]interface{}{
-				"field":           "tags_suggest",
-				"size":            7,
-				"skip_duplicates": true,
+func TagsAutocomplete(prefix string) []string {
+	var tagsAutocompQuery map[string]interface{} = map[string]interface{}{
+		"_source": "tags_suggest",
+		"suggest": map[string]interface{}{
+			"tags-suggest": map[string]interface{}{
+				"prefix": prefix,
+				"completion": map[string]interface{}{
+					"field":           "tags_suggest",
+					"size":            7,
+					"skip_duplicates": true,
+				},
 			},
 		},
-	},
-}
-
-func TagsAutocomplete(prefix string) []string {
+	}
 	var result map[string]interface{}
 	var buf bytes.Buffer
-	tagsAutocompQuery["suggest"].(map[string]interface{})["tags-suggest"].(map[string]interface{})["prefix"] = prefix
 	util.JsonEncode(tagsAutocompQuery, &buf)
-	res, err := Es.Search(
-		Es.Search.WithContext(context.Background()),
-		Es.Search.WithIndex("gami1018_rufl1020_recipes"),
-		Es.Search.WithBody(&buf),
-		Es.Search.WithPretty(),
-	)
+	res, err := executeSearch(&buf)
 	if err != nil {
 		log.Printf("Error getting ingredient suggestion response: %s", err)
 	}
@@ -184,26 +155,19 @@ func TagsAutocomplete(prefix string) []string {
 	return suggestions
 }
 
-var recipeQuery map[string]interface{} = map[string]interface{}{
-	"query": map[string]interface{}{
-		"match": map[string]interface{}{
-			"id": -1,
-		},
-	},
-	"size": 1,
-}
-
 func SearchRecipeById(req model.RecipeReq) model.Recipe {
+	var recipeQuery map[string]interface{} = map[string]interface{}{
+		"query": map[string]interface{}{
+			"match": map[string]interface{}{
+				"id": req.Id,
+			},
+		},
+		"size": 1,
+	}
 	var result map[string]interface{}
 	var buf bytes.Buffer
-	recipeQuery["query"].(map[string]interface{})["match"].(map[string]interface{})["id"] = req.Id
 	util.JsonEncode(recipeQuery, &buf)
-	res, err := Es.Search(
-		Es.Search.WithContext(context.Background()),
-		Es.Search.WithIndex("gami1018_rufl1020_recipes"),
-		Es.Search.WithBody(&buf),
-		Es.Search.WithPretty(),
-	)
+	res, err := executeSearch(&buf)
 	if err != nil {
 		log.Printf("Error getting ingredient suggestion response: %s", err)
 	}
@@ -212,55 +176,79 @@ func SearchRecipeById(req model.RecipeReq) model.Recipe {
 	util.JsonDecode(res.Body, &result)
 	hits := result["hits"].(map[string]interface{})["hits"].([]interface{})
 
-	log.Print(len(hits))
 	var hit map[string]interface{}
 	if len(hits) > 0 {
 		hit = hits[0].(map[string]interface{})
 	}
-	log.Print(hit)
 	var recipe model.Recipe
-	mapstructure.Decode(hit, &recipe)
-	log.Print(recipe)
+	mapstructure.Decode(hit["_source"], &recipe)
 	return recipe
 }
 
-func RequestElasticSearch() []interface{} {
-	var r map[string]interface{}
-	var buf bytes.Buffer
-	query := map[string]interface{}{
+func SearchRecipesByFilter(filterReq model.FilterPreviewReq) []model.RecipePreview {
+
+	var recipeFilterQuery map[string]interface{} = map[string]interface{}{
+		"from": 0,
+		"size": 15,
 		"query": map[string]interface{}{
-			"match": map[string]interface{}{
-				"ingredients": "pork chops",
+			"bool": map[string]interface{}{
+				"must": []map[string]interface{}{},
 			},
 		},
-		"size": 10,
 	}
-	util.JsonEncode(query, &buf)
-	res, err := Es.Search(
-		Es.Search.WithContext(context.Background()),
-		Es.Search.WithIndex("gami1018_rufl1020_recipes"),
-		Es.Search.WithBody(&buf),
-		Es.Search.WithTrackTotalHits(true),
-		Es.Search.WithPretty(),
-	)
+	var result map[string]interface{}
+	var buf bytes.Buffer
+	recipeFilterQuery["from"] = filterReq.From
+	must := recipeFilterQuery["query"].(map[string]interface{})["bool"].(map[string]interface{})["must"].([]map[string]interface{})
+	if len(filterReq.Name) > 0 {
+		must = append(must, map[string]interface{}{
+			"match": map[string]interface{}{
+				"name": map[string]interface{}{
+					"query":     filterReq.Name,
+					"fuzziness": 3,
+				},
+			},
+		})
+	}
+	if len(filterReq.Tags) > 0 {
+		must = append(must, map[string]interface{}{
+			"terms": map[string]interface{}{
+				"tags": filterReq.Tags,
+			},
+		})
+	}
+	if len(filterReq.Ingredients) > 0 {
+		must = append(must, map[string]interface{}{
+			"terms": map[string]interface{}{
+				"ingredients": filterReq.Ingredients,
+			},
+		})
+	}
+	util.JsonEncode(recipeFilterQuery, &buf)
+	res, err := executeSearch(&buf)
 	if err != nil {
-		log.Printf("Error getting response: %s", err)
+		log.Printf("Error getting ingredient suggestion response: %s", err)
 	}
 	defer res.Body.Close()
 	checkIfResponseIsError(res)
-	util.JsonDecode(res.Body, &r)
-	log.Printf(
-		"[%s] %d hits; took: %dms",
-		res.Status(),
-		int(r["hits"].(map[string]interface{})["total"].(map[string]interface{})["value"].(float64)),
-		int(r["took"].(float64)),
-	)
-	// Print the ID and document source for each hit.
-	for _, hit := range r["hits"].(map[string]interface{})["hits"].([]interface{}) {
-		log.Printf(" * ID=%s, %s", hit.(map[string]interface{})["_id"], hit.(map[string]interface{})["_source"])
+	util.JsonDecode(res.Body, &result)
+	hits := result["hits"].(map[string]interface{})["hits"].([]interface{})
+	var recipes []model.RecipePreview
+	for _, hit := range hits {
+		var recipe model.RecipePreview
+		mapstructure.Decode(hit.(map[string]interface{})["_source"], &recipe)
+		recipes = append(recipes, recipe)
 	}
-	log.Println(strings.Repeat("=", 37))
-	return r["hits"].(map[string]interface{})["hits"].([]interface{})
+	return recipes
+}
+
+func executeSearch(query io.Reader) (*esapi.Response, error) {
+	return Es.Search(
+		Es.Search.WithContext(context.Background()),
+		Es.Search.WithIndex("gami1018_rufl1020_recipes"),
+		Es.Search.WithBody(query),
+		Es.Search.WithPretty(),
+	)
 }
 
 func checkIfResponseIsError(res *esapi.Response) {

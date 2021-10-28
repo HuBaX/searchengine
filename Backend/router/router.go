@@ -1,7 +1,6 @@
 package router
 
 import (
-	"log"
 	"net/http"
 
 	"suchmaschinen/elastic"
@@ -25,8 +24,6 @@ func SetupRouter() {
 	r := chi.NewRouter()
 	r.Use(commonMiddleware)
 
-	r.Get("/", requestElastic)
-
 	r.Post("/name_autocomplete", nameAutocomplete)
 
 	r.Post("/name_search", nameSearch)
@@ -37,13 +34,9 @@ func SetupRouter() {
 
 	r.Post("/recipe_search", recipeSearch)
 
-	log.Print("Set up router")
-	http.ListenAndServe(":8080", r)
-}
+	r.Post("/filter_search", filterSearch)
 
-func requestElastic(w http.ResponseWriter, r *http.Request) {
-	entries := elastic.RequestElasticSearch()
-	util.JsonEncode(entries, w)
+	http.ListenAndServe(":8080", r)
 }
 
 func nameAutocomplete(w http.ResponseWriter, r *http.Request) {
@@ -80,4 +73,12 @@ func recipeSearch(w http.ResponseWriter, r *http.Request) {
 	util.JsonDecode(r.Body, &recipeReq)
 	recipe := elastic.SearchRecipeById(recipeReq)
 	util.JsonEncode(recipe, w)
+}
+
+func filterSearch(w http.ResponseWriter, r *http.Request) {
+	var filterReq model.FilterPreviewReq
+	util.JsonDecode(r.Body, &filterReq)
+	recipes := elastic.SearchRecipesByFilter(filterReq)
+	response := model.LoadedRecipes{Recipes: recipes, AlreadyLoaded: filterReq.From + len(recipes)}
+	util.JsonEncode(response, w)
 }
