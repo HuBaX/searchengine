@@ -42,7 +42,7 @@ func SearchRecipesByName(fuzzyReq model.PreviewReq) []model.RecipePreview {
 	util.JsonDecode(res.Body, &result)
 	hits := result["hits"].(map[string]interface{})["hits"].([]interface{})
 
-	recipes := make([]model.RecipePreview, 15)
+	recipes := make([]model.RecipePreview, 0)
 	for _, hit := range hits {
 		var recipe model.RecipePreview
 		mapstructure.Decode(hit.(map[string]interface{})["_source"], &recipe)
@@ -78,7 +78,7 @@ func NameAutocomplete(prefix string) []string {
 	util.JsonDecode(res.Body, &result)
 	options := result["suggest"].(map[string]interface{})["recipe-suggest"].([]interface{})[0].(map[string]interface{})["options"].([]interface{})
 
-	var suggestions []string
+	suggestions := make([]string, 0)
 	for _, opt := range options {
 		var convOpt model.Option
 		mapstructure.Decode(opt, &convOpt)
@@ -112,7 +112,7 @@ func IngredientAutocomplete(prefix string) []string {
 	checkIfResponseIsError(res)
 	util.JsonDecode(res.Body, &result)
 	options := result["suggest"].(map[string]interface{})["ingredients-suggest"].([]interface{})[0].(map[string]interface{})["options"].([]interface{})
-	var suggestions []string
+	suggestions := make([]string, 0)
 	for _, opt := range options {
 		var convOpt model.Option
 		mapstructure.Decode(opt, &convOpt)
@@ -146,7 +146,7 @@ func TagsAutocomplete(prefix string) []string {
 	checkIfResponseIsError(res)
 	util.JsonDecode(res.Body, &result)
 	options := result["suggest"].(map[string]interface{})["tags-suggest"].([]interface{})[0].(map[string]interface{})["options"].([]interface{})
-	var suggestions []string
+	suggestions := make([]string, 0)
 	for _, opt := range options {
 		var convOpt model.Option
 		mapstructure.Decode(opt, &convOpt)
