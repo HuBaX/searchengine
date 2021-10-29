@@ -66,15 +66,17 @@ function SearchRequest() {
   };
 
   const sendNameAutocompleteReq = async(prefix: string) => {
-    const response = await fetch('http://3.218.166.198:8080/name_search', {
+    const response = await fetch('http://3.218.166.198:8080/name_autocomplete', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': 'https://3.218.166.198:8080/*'
       },
       body: JSON.stringify({prefix: prefix})
     })
     const data = await response.json() as string[]
+    console.log("data",data)
     setNameOptions(data)
   }
 
@@ -113,7 +115,7 @@ function SearchRequest() {
               />
             )}
            />
-                <IconButton onClick={sendSearchRequest} color="primary"  > <SearchIcon/> </IconButton>
+                <IconButton onClick={() => {setRecipes([]); sendSearchRequest()}} color="primary"  > <SearchIcon/> </IconButton>
                 <IconButton onClick={toggleFilterSection} color="primary" > <FilterAltIcon/></IconButton>
             </Box>  
             {isFilterVisible &&
