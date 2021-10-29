@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import './App.css';
 import Header from './components/header';
 import SearchRequest from './components/searchrequest';
-import RecipeCard from './components/recipecard';
 import {Grid} from "@mui/material"
 import Scroller from './components/scroller'
 

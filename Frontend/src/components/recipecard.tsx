@@ -6,14 +6,9 @@ import Typography from '@mui/material/Typography';
 import RecipeDialog from './recipedialog';
 import {Grid} from "@mui/material"
 
-interface RecipeCardProps { recipeName: string,  description: string, time: number}
+interface RecipeCardProps { recipeName: string,  description: string, time: number, recipe_id: number}
 
-function RecipeCard({recipeName, description, time}: RecipeCardProps) {
-
-    const showFullRecipe = () => {
-        
-    }
-  
+function RecipeCard({recipeName, description, time, recipe_id}: RecipeCardProps) {  
     
   return (
       <Grid item xs={4}> 
@@ -30,7 +25,7 @@ function RecipeCard({recipeName, description, time}: RecipeCardProps) {
             </Typography>
         </CardContent>
         <CardActions>
-          <RecipeDialog></RecipeDialog>
+          <RecipeDialog recipe_id={recipe_id}></RecipeDialog>
         </CardActions>
         </Card>
       </Grid>

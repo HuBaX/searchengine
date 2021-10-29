@@ -5,16 +5,29 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import { Typography } from '@mui/material';
 
 
 interface Recipe {n_steps: number, n_ingredients: number, minutes: number, description: string, steps: string[], tags: string[], nutrition: number[], name: string, ingredients: string[]}
+interface Recipe_id {recipe_id: number}
 
-
-function RecipeDialog() {
+function RecipeDialog({recipe_id}: Recipe_id) {
   const [open, setOpen] = React.useState(false);
+  const [recipeData, setRecipeData] = React.useState<Recipe>({n_steps: 0, n_ingredients: 0, minutes: 0, description: "Description ", steps:["Steps..."], tags: ["Tags..."], nutrition: [], name: "Name", ingredients: ["Ingredients..."] })
 
-  const handleClickOpen = () => {
+  const handleClickOpen = async() => {
     setOpen(true);
+
+    const response = await fetch('http://3.218.166.198:8080/recipe_search', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({Id: recipe_id})
+    })
+    const data = await response.json() as Recipe
+    setRecipeData(data)
   };
 
   const handleClose = () => {
@@ -31,13 +44,21 @@ function RecipeDialog() {
         onClose={handleClose}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
+        fullWidth={true}
       >
         <DialogTitle id="recipe-card-recipe-name">
-          {"RecipeName"}
+        <Typography variant="h5">{recipeData.name}</Typography>
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="recipe-card-recipe-description">
-            Infos...
+            <Typography variant="h6">Description:</Typography>
+            <Typography variant="body1">{recipeData.description}</Typography>
+            <Typography variant="h6">Estimated Time: </Typography>
+            <Typography variant="body1">{recipeData.minutes} minutes</Typography>
+            <Typography variant="h6">Ingredients: </Typography>
+            <Typography variant="body1">{recipeData.ingredients}</Typography>
+            <Typography variant="h6">Steps: </Typography>
+            <Typography variant="body1">{recipeData.steps}</Typography>
           </DialogContentText>
         </DialogContent>
         <DialogActions>

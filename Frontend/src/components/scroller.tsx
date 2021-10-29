@@ -49,7 +49,7 @@ function Scroller() {
       <div className="container">
         <div className="row m-2">
           {items.map((item) => {
-            return <RecipeCard recipeName={item.name} description={item.description} time={item.minutes} />;
+            return <RecipeCard recipeName={item.name} description={item.description} time={item.minutes} recipe_id={item.id}/>;
           })}
         </div>
       </div>

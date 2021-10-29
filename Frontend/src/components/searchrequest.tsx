@@ -8,6 +8,7 @@ import Tags from './autofill';
 import DiscreteSliderLabel from './slider';
 import RecipeCard from './recipecard'
 import InfiniteScroll from "react-infinite-scroll-component";
+import Autocomplete from '@mui/material/Autocomplete';
 
 interface RecipePreview {
   id: number 
@@ -77,7 +78,6 @@ function SearchRequest() {
     setNameOptions(data)
   }
 
-  // TODO: Reset state of slider
   const toggleFilterSection = () => {
     setIsFilterVisible(!isFilterVisible)  
     if(!isFilterVisible) {
@@ -92,7 +92,27 @@ function SearchRequest() {
         <Box sx={{margin: 2}}>
           <Paper>
             <Box sx={{display: "flex"}}>
-                <TextField label="Search for a recipe" type="search" onChange={(event) => {setName(event.target.value)}} value={name} size="medium" sx={{flex: "1", margin:2}}/>
+            <Autocomplete
+              freeSolo
+              id="search-field"
+              sx={{flex: "1", margin:1}}
+              disableClearable
+              options={nameOptions}
+              renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Search for a recipe"
+                sx={{margin:1}}
+                value={name}
+                size="medium"
+                onChange={(event) => {setName(event.target.value); sendNameAutocompleteReq(event.target.value);}}
+                InputProps={{
+                  ...params.InputProps,
+                  type: 'search',
+                }}
+              />
+            )}
+           />
                 <IconButton onClick={sendSearchRequest} color="primary"  > <SearchIcon/> </IconButton>
                 <IconButton onClick={toggleFilterSection} color="primary" > <FilterAltIcon/></IconButton>
             </Box>  
@@ -119,7 +139,7 @@ function SearchRequest() {
           <div className="container">
             <div className="row m-2">
               {recipes.map((recipe) => {
-                return <RecipeCard recipeName={recipe.name} description={recipe.description} time={recipe.minutes} />;
+                return <RecipeCard recipeName={recipe.name} description={recipe.description} time={recipe.minutes} recipe_id={recipe.id}/>;
               })}
             </div>
           </div>

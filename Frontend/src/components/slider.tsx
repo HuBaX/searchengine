@@ -1,6 +1,5 @@
 import * as React from 'react';
 import {Box, Slider, Typography} from '@mui/material';
-import { useState } from "react";
 
 const marks = [
   {
