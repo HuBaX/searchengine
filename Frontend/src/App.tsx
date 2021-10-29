@@ -1,17 +1,22 @@
 import React, { useState } from 'react';
-import logo from './logo.svg';
 import './App.css';
-import Search from './components/request';
-
+import Header from './components/header';
+import SearchRequest from './components/searchrequest';
+import RecipeCard from './components/recipecard';
+import {Grid} from "@mui/material"
+import Scroller from './components/scroller'
 
 
 function App() {
   return (
     <div>
-      <div>Hello World</div>
-      <Search></Search>
+      <Header></Header>
+      <SearchRequest></SearchRequest>
+      <Grid container spacing={1}>
+        <Scroller></Scroller>
+      </Grid> 
     </div>
-    );
+  );
 }
 
 
