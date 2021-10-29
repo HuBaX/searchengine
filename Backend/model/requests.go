@@ -15,6 +15,7 @@ type RecipeReq struct {
 
 type FilterPreviewReq struct {
 	From        int
+	Minutes     int
 	Name        string
 	Tags        []string
 	Ingredients []string

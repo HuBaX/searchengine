@@ -6,7 +6,7 @@ import Typography from '@mui/material/Typography';
 import RecipeDialog from './recipedialog';
 import {Grid} from "@mui/material"
 
-export declare interface RecipeCardProps { recipeName: string,  description: string, time: number}
+interface RecipeCardProps { recipeName: string,  description: string, time: number}
 
 function RecipeCard({recipeName, description, time}: RecipeCardProps) {
 

@@ -33,9 +33,11 @@ function valuetext(value: number) {
   return `${value}min`;
 }
 
-function DiscreteSliderLabel() {
+interface SliderProps {
+  setSliderValue: React.Dispatch<React.SetStateAction<number>>
+}
 
-  const [sliderValue, setSliderValue] = useState<number>();
+function DiscreteSliderLabel({setSliderValue}: SliderProps) {
 
   const updateStates = (event: Event, value: number|number[]) => {
     setSliderValue(value as number)

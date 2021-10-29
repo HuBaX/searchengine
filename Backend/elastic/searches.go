@@ -42,7 +42,7 @@ func SearchRecipesByName(fuzzyReq model.PreviewReq) []model.RecipePreview {
 	util.JsonDecode(res.Body, &result)
 	hits := result["hits"].(map[string]interface{})["hits"].([]interface{})
 
-	var recipes []model.RecipePreview
+	recipes := make([]model.RecipePreview, 15)
 	for _, hit := range hits {
 		var recipe model.RecipePreview
 		mapstructure.Decode(hit.(map[string]interface{})["_source"], &recipe)
@@ -193,6 +193,13 @@ func SearchRecipesByFilter(filterReq model.FilterPreviewReq) []model.RecipePrevi
 		"query": map[string]interface{}{
 			"bool": map[string]interface{}{
 				"must": []map[string]interface{}{},
+				"filter": map[string]interface{}{
+					"range": map[string]interface{}{
+						"minutes": map[string]interface{}{
+							"lte": filterReq.Minutes,
+						},
+					},
+				},
 			},
 		},
 	}
@@ -233,7 +240,7 @@ func SearchRecipesByFilter(filterReq model.FilterPreviewReq) []model.RecipePrevi
 	checkIfResponseIsError(res)
 	util.JsonDecode(res.Body, &result)
 	hits := result["hits"].(map[string]interface{})["hits"].([]interface{})
-	var recipes []model.RecipePreview
+	recipes := make([]model.RecipePreview, 0)
 	for _, hit := range hits {
 		var recipe model.RecipePreview
 		mapstructure.Decode(hit.(map[string]interface{})["_source"], &recipe)
