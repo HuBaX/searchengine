@@ -21,6 +21,8 @@ function Scroller() {
     return data;
   };
 
+
+  // 
   const fetchData = async () => {
     const commentsFormServer = await fetchComments();
 
