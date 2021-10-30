@@ -47,23 +47,23 @@ function RecipeDialog({recipe_id}: Recipe_id) {
         fullWidth={true}
       >
         <DialogTitle id="recipe-card-recipe-name">
-        <Typography variant="h5">{recipeData.name}</Typography>
+        <Typography variant="h4">{recipeData.name}</Typography>
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="recipe-card-recipe-description">
-            <Typography variant="h6">Description:</Typography>
-            <Typography variant="body1">{recipeData.description}</Typography>
-            <Typography variant="h6">Estimated Time: </Typography>
-            <Typography variant="body1">{recipeData.minutes} minutes</Typography>
-            <Typography variant="h6">Ingredients: </Typography>
-            <Typography variant="body1">{recipeData.ingredients}</Typography>
-            <Typography variant="h6">Steps: </Typography>
-            <Typography variant="body1">{recipeData.steps}</Typography>
+            <Typography variant="h6" fontWeight={600} color='black' sx={{marginBottom:1, marginTop:1}}>Description:</Typography>
+            <Typography variant="body1" color='black' >{recipeData.description} </Typography>
+            <Typography variant="h6" fontWeight={600} color='black' sx={{marginBottom:1, marginTop:1}}>Estimated Time: </Typography>
+            <Typography variant="body1" color='black' >{recipeData.minutes} minutes</Typography>
+            <Typography variant="h6" fontWeight={600} color='black' sx={{marginBottom:1, marginTop:1}}>Ingredients: </Typography>
+            <Typography variant="body1" color='black' >{recipeData.ingredients != null ? recipeData.ingredients.map((ingredient => {return <p>{ingredient}</p>})): <p>Ingredinets not available</p>}</Typography>
+            <Typography variant="h6" fontWeight={600} color='black' sx={{marginBottom:1, marginTop:1}}>Steps: </Typography>
+            <Typography variant="body1" color='black' sx={{paddingLeft:2}}><ol>{recipeData.steps != null ? recipeData.steps.map((step => {return <li>{step}</li>})): <p>No steps available</p>}</ol></Typography>
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Close</Button>
-        </DialogActions>
+          <Button onClick={handleClose} sx={{}}>Close</Button>
+        </DialogActions>      
       </Dialog>
     </div>
   );

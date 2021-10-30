@@ -9,6 +9,7 @@ import DiscreteSliderLabel from './slider';
 import RecipeCard from './recipecard'
 import InfiniteScroll from "react-infinite-scroll-component";
 import Autocomplete from '@mui/material/Autocomplete';
+import {Grid} from "@mui/material"
 
 interface RecipePreview {
   id: number 
@@ -90,6 +91,7 @@ function SearchRequest() {
   }
 
   return (
+    <div>
       <Container maxWidth="md">
         <Box sx={{margin: 2}}>
           <Paper>
@@ -129,6 +131,8 @@ function SearchRequest() {
             }
           </Paper>
         </Box>
+      </Container>
+      <div>
         <InfiniteScroll
           dataLength={15} //This is important field to render the next data
           next={sendSearchRequest}
@@ -140,13 +144,16 @@ function SearchRequest() {
               </p>}>
           <div className="container">
             <div className="row m-2">
-              {recipes.map((recipe) => {
-                return <RecipeCard recipeName={recipe.name} description={recipe.description} time={recipe.minutes} recipe_id={recipe.id}/>;
-              })}
+            <Grid container spacing={2} id="Recipe-Grid">
+                {recipes.map((recipe) => {
+                  return <Grid item xs={12} sm={12} md={6} xl={4} ><RecipeCard recipeName={recipe.name} description={recipe.description} time={recipe.minutes} recipe_id={recipe.id}/></Grid>;
+                })}
+              </Grid>
             </div>
           </div>
         </InfiniteScroll>
-      </Container>
+        </div>
+    </div>
   );
 }
 
