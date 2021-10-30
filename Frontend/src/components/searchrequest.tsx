@@ -34,8 +34,9 @@ function SearchRequest() {
   const [nameOptions, setNameOptions] = useState<string[]>([])
   const [minutes, setMinutes] = useState(150)
   const [hasMore, setHasMore] = useState(true);
+  const [dataLen, setDataLen] = useState(15)
 
-  const  sendSearchRequest = async() => {
+  const  sendSearchRequest = async(resetAll: boolean, alreadyLoaded: number) => {
     var response
     if(!isFilterVisible) {
       response = await fetch('http://3.218.166.198:8080/name_search', {
@@ -57,8 +58,13 @@ function SearchRequest() {
       })
     }
     const data = await response.json() as LoadedRecipes
-    setRecipes([...recipes, ...data.recipes])
+    if(resetAll) {
+      setRecipes(data.recipes)
+    } else {
+      setRecipes([...recipes, ...data.recipes])
+    }
     setAlreadyLoaded(alreadyLoaded + data.alreadyLoaded)
+    setDataLen(dataLen + data.recipes.length)
     if(data.recipes.length === 0) {
       setHasMore(false)
     } else {
@@ -77,7 +83,6 @@ function SearchRequest() {
       body: JSON.stringify({prefix: prefix})
     })
     const data = await response.json() as string[]
-    console.log("data",data)
     setNameOptions(data)
   }
 
@@ -117,7 +122,10 @@ function SearchRequest() {
               />
             )}
            />
-                <IconButton onClick={() => {setRecipes([]); sendSearchRequest()}} color="primary"  > <SearchIcon/> </IconButton>
+                <IconButton onClick={() => {
+                  setAlreadyLoaded(0)
+                  sendSearchRequest(true, 0)
+                  }} color="primary"  > <SearchIcon/> </IconButton>
                 <IconButton onClick={toggleFilterSection} color="primary" > <FilterAltIcon/></IconButton>
             </Box>  
             {isFilterVisible &&
@@ -134,8 +142,8 @@ function SearchRequest() {
       </Container>
       <div>
         <InfiniteScroll
-          dataLength={15} //This is important field to render the next data
-          next={sendSearchRequest}
+          dataLength={dataLen} //This is important field to render the next data
+          next={() => {sendSearchRequest(false, alreadyLoaded)}}
           hasMore={hasMore}
           loader={<div></div>}
           endMessage={
