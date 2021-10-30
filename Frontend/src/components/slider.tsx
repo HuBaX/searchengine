@@ -43,7 +43,7 @@ function DiscreteSliderLabel({setSliderValue}: SliderProps) {
   }
 
   return (
-    <Box sx={{ margin:3}} maxWidth="sm">
+    <Box sx={{ margin:3, flexGrow:1}} maxWidth="sm">
       <Typography variant="subtitle2">Preparation Time</Typography>
       <Slider
         id="filter-slider"

@@ -12,13 +12,13 @@ interface RecipeCardProps { recipeName: string,  description: string, time: numb
 function RecipeCard({recipeName, description, time, recipe_id}: RecipeCardProps) {  
     
   return (
-      <Card sx={{margin: 2, minWidth: 300, height: 300, display: "flex", flexDirection: "column",borderRadius:2}}>
+      <Card sx={{margin: 2, minWidth: 300, height: 300, display: "flex", flexDirection: "column",borderRadius:2, padding: 2}}>
         <CardContent sx={{flex: 1}}>
-          <Typography variant="h5" fontWeight={600} sx={{marginBottom: 1}}>
+          <Typography variant="h5" fontWeight={600} sx={{marginBottom: 2}}>
           {recipeName}
           </Typography>
           <Typography sx={{marginBottom: 1}}>
-          {description.length < 290? description : description.substring(0,290) + "..."}
+          {description.length < 220? description : description.substring(0,220) + "..."}
           </Typography>
         </CardContent>
         

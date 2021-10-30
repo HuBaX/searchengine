@@ -119,18 +119,24 @@ function SearchRequest() {
                   ...params.InputProps,
                   type: 'search',
                 }}
+                onKeyDown={(event) => {
+                  if(event.key === "Enter"){
+                  sendSearchRequest(true, 0)
+                }}}
               />
             )}
            />
                 <IconButton onClick={() => {
                   setAlreadyLoaded(0)
                   sendSearchRequest(true, 0)
-                  }} color="primary"  > <SearchIcon/> </IconButton>
+                  }} color="primary"> <SearchIcon/> </IconButton>
                 <IconButton onClick={toggleFilterSection} color="primary" > <FilterAltIcon/></IconButton>
             </Box>  
             {isFilterVisible &&
               <div style={{textAlign:'center'}}> 
-                <DiscreteSliderLabel setSliderValue={setMinutes} ></DiscreteSliderLabel>
+                <Box sx={{display:'flex',justifyContent:'center'}}>
+                  <DiscreteSliderLabel setSliderValue={setMinutes}></DiscreteSliderLabel>
+                </Box>
                 <Box sx={{display: "flex"}}>
                   <Tags filterType="Ingredients" placeholder="e.g Chicken, Fish, ..." setTags={setIngredients} autocompleteRoute="ingredients_autocomplete"></Tags>
                   <Tags filterType="Tags" placeholder="e.g high-protein, dessert, ..." setTags={setTags} autocompleteRoute="tags_autocomplete"></Tags>
@@ -152,7 +158,7 @@ function SearchRequest() {
               </p>}>
           <div className="container">
             <div className="row m-2">
-            <Grid container spacing={2} id="Recipe-Grid">
+            <Grid container spacing={2} id="Recipe-Grid" sx={{padding:10}}>
                 {recipes.map((recipe) => {
                   return <Grid item xs={12} sm={12} md={6} xl={4} ><RecipeCard recipeName={recipe.name} description={recipe.description} time={recipe.minutes} recipe_id={recipe.id}/></Grid>;
                 })}
