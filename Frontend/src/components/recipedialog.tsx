@@ -47,7 +47,7 @@ function RecipeDialog({recipe_id}: Recipe_id) {
         fullWidth={true}
       >
         <DialogTitle id="recipe-card-recipe-name">
-        <Typography variant="h4">{recipeData.name}</Typography>
+        <Typography variant="h4" fontWeight={600}>{recipeData.name}</Typography>
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="recipe-card-recipe-description">

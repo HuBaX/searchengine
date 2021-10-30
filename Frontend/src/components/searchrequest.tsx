@@ -99,7 +99,7 @@ function SearchRequest() {
     <div>
       <Container maxWidth="md">
         <Box sx={{margin: 2}}>
-          <Paper>
+          <Paper sx={{borderRadius:2}}>
             <Box sx={{display: "flex"}}>
             <Autocomplete
               freeSolo
@@ -129,8 +129,8 @@ function SearchRequest() {
                 <IconButton onClick={toggleFilterSection} color="primary" > <FilterAltIcon/></IconButton>
             </Box>  
             {isFilterVisible &&
-              <div> 
-                <DiscreteSliderLabel setSliderValue={setMinutes}></DiscreteSliderLabel>
+              <div style={{textAlign:'center'}}> 
+                <DiscreteSliderLabel setSliderValue={setMinutes} ></DiscreteSliderLabel>
                 <Box sx={{display: "flex"}}>
                   <Tags filterType="Ingredients" placeholder="e.g Chicken, Fish, ..." setTags={setIngredients} autocompleteRoute="ingredients_autocomplete"></Tags>
                   <Tags filterType="Tags" placeholder="e.g high-protein, dessert, ..." setTags={setTags} autocompleteRoute="tags_autocomplete"></Tags>
