@@ -231,6 +231,7 @@ func SearchRecipesByFilter(filterReq model.FilterPreviewReq) []model.RecipePrevi
 			},
 		})
 	}
+	recipeFilterQuery["query"].(map[string]interface{})["bool"].(map[string]interface{})["must"] = must
 	util.JsonEncode(recipeFilterQuery, &buf)
 	res, err := executeSearch(&buf)
 	if err != nil {
